@@ -1,4 +1,6 @@
 lanccer docker sur votre machine
+
+
 -- dans le dossier où se trouve le fichier docker-compose.yaml , lancez la commande : docker-compose build
 -- et puis lancez la commande : docker-compose -d  ( pour run le projet)
 

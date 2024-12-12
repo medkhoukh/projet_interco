@@ -5,7 +5,7 @@ lanccer docker sur votre machine
 
 
 
--- et puis lancez la commande : docker-compose -d  ( pour run le projet)
+-- et puis lancez la commande : docker-compose up -d  ( pour run le projet)
 
 
 

@@ -17,6 +17,8 @@ services:
       - ./dhcpd.conf:/etc/dhcp/dhcpd.conf   
     tty: true   
     stdin_open: true
+    container_name: box-particulier
+
 
 
   routeur-particuliers:
@@ -29,7 +31,7 @@ services:
           ipv4_address: 120.0.34.5
         Reseau_Coeur:
           ipv4_address: 120.0.40.5
-
+      container_name: routeur-particuliers
 
   routeur-dmz:
       build: image-dmz
@@ -43,7 +45,7 @@ services:
           ipv4_address: 120.0.40.3
       volumes:
         - ./image-dmz:/etc/frr:z
-
+      container_name: routeur-dmz
   
   dns-dmz:
       build: image-dns-global
@@ -53,6 +55,7 @@ services:
       networks:
         Reseau_DMZ:
           ipv4_address: 120.0.38.5
+      container_name: dns-dmz
      
 
   clientparticulier:
@@ -63,6 +66,7 @@ services:
       networks:
         reseau_Prive:
           ipv4_address: 192.168.1.3
+      container_name: clientparticulier
 
   routeur-entreprise:
       build : image-routeur-Entreprise
@@ -74,6 +78,7 @@ services:
           ipv4_address: 120.0.40.4
         Reseau_Entreprise:
           ipv4_address: 120.0.32.2
+      container_name: routeur-entreprise
 
   routeur-entreprise-dns:
       build : image-routeur-Entreprise-DNS
@@ -85,6 +90,7 @@ services:
           ipv4_address: 120.0.32.3
         Reseau_Entreprise_DNS:
           ipv4_address: 120.0.33.18
+      container_name: routeur-entreprise-dns
 
 networks:
   particuliers:

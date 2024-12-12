@@ -1,0 +1,10 @@
+options { #ce document configure le serveur DNS 
+    directory "/var/cache/bind"; #Les logs et fichiers de gestion sont envoyés dans ce dossier
+    allow-query { any; };  # N'importe quel adresse de n'importe quel réseau peut faire une requete DNS
+    forwarders {
+        # Si on a des requetes non resolues, on renvoit vers des adresses de serveur DNS dans cette liste, par exemple 8.8.8.8 est le serveur DNS de google
+    };
+    dnssec-validation auto;
+    listen-on { any; }; #on écoute sur l'interface eth0
+    user bind;
+};

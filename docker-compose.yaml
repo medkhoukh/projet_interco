@@ -45,14 +45,15 @@ services:
         - ./image-dmz:/etc/frr:z
 
   
-  DNS-DMZ:
-      image: ubuntu/bind9:latest
+  dns-dmz:
+      build: image-dns-global
       restart: always
       privileged: true
       command: tail -f /dev/null
       networks:
         Reseau_DMZ:
           ipv4_address: 120.0.38.5
+     
 
   clientparticulier:
       image: alpine       

@@ -9,5 +9,4 @@ lanccer docker sur votre machine
 
 
 
-pour activer le routage ospf sur les routeurs il faut executer une commande en plus à l'interieur des containers de chaque routeur: 
-chown frr:frr /etc/frr/frr.conf && chmod 640 /etc/frr/frr.conf && /usr/lib/frr/zebra -d && /usr/lib/frr/ospfd -d && /etc/init.d/frr start
+pour activer le routage ospf sur les routeurs il faut executer le script_ospf.sh avec : ./script_ospf.sh ( ps : si ospf fonctionne déja correctement sur l'un des routeurs et que le script bloque, appuyez sur ctrl+c)

@@ -1,6 +1,14 @@
 
 services:
-
+  
+  serveur-web:
+    image: httpd:latest
+    restart: always
+    privileged: true
+    command: tail -f /dev/null
+    networks:
+      Reseau_DMZ:
+        ipv4_address: 120.0.38.6
 
   vpn: 
     image: allfunc/vpn:latest

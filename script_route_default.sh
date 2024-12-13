@@ -7,4 +7,7 @@ docker exec -it box-particulier /bin/sh -c "ip route del default && ip route add
 #on installe dhclient sur le container du particulier
 
 docker exec -it clientparticulier /bin/sh -c "apk add dhclient  && dhclient eth0 && dhclient -r eth0"
+
+# mise en place du nat
+docker exec -it clientparticulier /bin/sh -c "iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE && iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE "
 echo " pour utiliser le dhcp : dhclient eth0 ----> sur le container clientparticulier"

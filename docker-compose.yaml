@@ -1,6 +1,16 @@
 
 services:
-  
+
+
+  vpn: 
+    image: allfunc/vpn:latest
+    restart: always
+    priviléged: true
+    command: tail -f /dev/null
+    networks:
+      Reseau_DMZ:
+        ipv4_adress: 120.0.38.4
+        
   box:
     image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
     restart: always
@@ -18,8 +28,22 @@ services:
     tty: true   
     stdin_open: true
     container_name: box-particulier
-
-
+  
+  serveur-dhcp-entreprise:
+    image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
+    restart: always
+    privileged: true
+    command: tail -f /dev/null
+    networks:
+      Reseau_Entreprise_Services:
+        ipv4_address: 120.0.33.19
+    ports:
+      - "67:67/udp"   # Expose le port pour dhcp
+    volumes:
+      - .serveur-dhcp-entreprise/dhcpd.conf:/etc/dhcp/dhcpd.conf   
+    tty: true   
+    stdin_open: true
+    container_name: Serveur-dhcp-entreprise
 
   routeur-particuliers:
       build : image-routeur-particuliers
@@ -80,7 +104,7 @@ services:
           ipv4_address: 120.0.32.2
       container_name: routeur-entreprise
 
-  routeur-entreprise-dns:
+  routeur-entreprise-services:
       build : image-routeur-Entreprise-DNS
       restart: always
       privileged: true

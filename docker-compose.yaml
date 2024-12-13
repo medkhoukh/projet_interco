@@ -9,7 +9,7 @@ services:
     command: tail -f /dev/null
     networks:
       Reseau_DMZ:
-        ipv4_adress: 120.0.38.4
+        ipv4_address: 120.0.38.4
         
   box:
     image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
@@ -35,7 +35,7 @@ services:
     privileged: true
     command: tail -f /dev/null
     networks:
-      Reseau_Entreprise_Services:
+      Reseau_Entreprise_DNS:
         ipv4_address: 120.0.33.19
     ports:
       - "67:67/udp"   # Expose le port pour dhcp

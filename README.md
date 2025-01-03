@@ -8,7 +8,7 @@ lanccer docker sur votre machine
 -- et puis lancez la commande : docker-compose up -d  ( pour run le projet)
 
 
-ajoutez les permissions pour lancer les scripts: chmod +x script_route_default.sh //  chmod +x script_ospf.sh ......... ( pour tout les scripts )
+ajoutez les permissions pour lancer les scripts: chmod +x script_route_default.sh //  chmod +x script_ospf.sh ......... ( pour tout les scripts : chmod x+ script*.sh )
 
 pour lancer le script principal : ./start.sh
 

@@ -2,10 +2,11 @@
 
 # Liste des noms des conteneurs
 containers=(
-  "routeur-particuliers"
-  "routeur-dmz"
-  "routeur-entreprise-dns"
-  "routeur-entreprise"
+  "Routeur_acces_particuliers"
+  "Routeur_services_FAI" 
+  "Routeur_acces_entreprises"
+  "Routeur_entreprise_site_principal"
+  "Routeur_interco"
 )
 
 # Commandes à exécuter dans chaque conteneur
@@ -28,7 +29,5 @@ for container in "${containers[@]}"; do
     echo "Configuration réussie pour le conteneur: $container"
   fi
 done
-
-
 
 echo "ospf est prêt"

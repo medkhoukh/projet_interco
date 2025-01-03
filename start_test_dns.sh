@@ -1,0 +1,1 @@
+docker exec -it particulier /bin/sh -c 'printf "nameserver 120.0.38.5\nnameserver 120.0.0.33.21 \nnameserver 8.8.8.8 " > resolv.conf'

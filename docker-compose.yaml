@@ -1,24 +1,21 @@
 
 services:
   
-  serveur-web:
-    image: httpd:latest
-    restart: always
+  serveur-web-entreprise:
+    image: nginx
     privileged: true
-    command: tail -f /dev/null
     networks:
       Reseau_DMZ:
-        ipv4_address: 120.0.38.6
+        ipv4_address: 120.0.33.22
+    container_name: serveur_web_entreprise
 
-  vpn: 
-    image: allfunc/vpn:latest
-    restart: always
-    priviléged: true
-    command: tail -f /dev/null
+  serveur-web:
+    image: nginx
+    privileged: true
+    container_name: serveur_web
     networks:
-      Reseau_DMZ:
-        ipv4_address: 120.0.38.4
-        
+      Reseau_services_FAI:
+        ipv4_address: 120.0.38.8
   box:
     image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
     restart: always
@@ -35,23 +32,7 @@ services:
       - ./dhcpd.conf:/etc/dhcp/dhcpd.conf   
     tty: true   
     stdin_open: true
-    container_name: box-particulier
-  
-  serveur-dhcp-entreprise:
-    image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
-    restart: always
-    privileged: true
-    command: tail -f /dev/null
-    networks:
-      Reseau_Entreprise_DNS:
-        ipv4_address: 120.0.33.19
-    ports:
-      - "67:67/udp"   # Expose le port pour dhcp
-    volumes:
-      - .serveur-dhcp-entreprise/dhcpd.conf:/etc/dhcp/dhcpd.conf   
-    tty: true   
-    stdin_open: true
-    container_name: Serveur-dhcp-entreprise
+    container_name: box_particulier
 
   routeur-particuliers:
       build : image-routeur-particuliers
@@ -63,73 +44,93 @@ services:
           ipv4_address: 120.0.34.5
         Reseau_Coeur:
           ipv4_address: 120.0.40.5
-      container_name: routeur-particuliers
+      container_name: Routeur_acces_particuliers
 
-  routeur-dmz:
-      build: image-dmz
+
+  routeur-services-fai:
+      build: image-routeur-services-fai
       restart: always
       privileged: true
       command: tail -f /dev/null
       networks:
-        Reseau_DMZ:
+        Reseau_services_FAI:
           ipv4_address: 120.0.38.3
         Reseau_Coeur:
           ipv4_address: 120.0.40.3
-      volumes:
-        - ./image-dmz:/etc/frr:z
-      container_name: routeur-dmz
+      container_name: Routeur_services_FAI  
+
   
-  dns-dmz:
-      build: image-dns-global
-      restart: always
+  dns-global:
+      build: dns-global
       privileged: true
-      command: tail -f /dev/null
+      networks:
+        Reseau_services_FAI:
+          ipv4_address: 120.0.38.5
+      
+      container_name: serveur_dns
+  dns-entreprise:
+      build: dns-entreprise
+      privileged: true
       networks:
         Reseau_DMZ:
-          ipv4_address: 120.0.38.5
-      container_name: dns-dmz
-     
+          ipv4_address: 120.0.33.21
+      
+      container_name: serveur_dns_entreprise
 
   clientparticulier:
-      image: alpine       
+      image: debian:latest
       restart: always
       privileged: true
       command: tail -f /dev/null 
       networks:
         reseau_Prive:
           ipv4_address: 192.168.1.3
-      container_name: clientparticulier
+      container_name: particulier
 
-  routeur-entreprise:
-      build : image-routeur-Entreprise
+  routeur-acces-entreprises:
+      build : image-routeur-acces-entreprises
       restart: always
       privileged: true
       command: tail -f /dev/null
       networks:
         Reseau_Coeur:
           ipv4_address: 120.0.40.4
-        Reseau_Entreprise:
-          ipv4_address: 120.0.32.2
-      container_name: routeur-entreprise
+        Reseau_acces_entreprises:
+          ipv4_address: 120.0.32.4
+      container_name: Routeur_acces_entreprises
 
-  routeur-entreprise-services:
-      build : image-routeur-Entreprise-DNS
+  routeur-entreprise-site-principal:
+      build : image-routeur-Entreprise-site-principal
       restart: always
       privileged: true
       command: tail -f /dev/null 
       networks:
-        Reseau_Entreprise:
+        Reseau_acces_entreprises:
           ipv4_address: 120.0.32.3
-        Reseau_Entreprise_DNS:
+        Reseau_DMZ:
           ipv4_address: 120.0.33.18
-      container_name: routeur-entreprise-dns
+        Reseau_service_administratif:
+          ipv4_address: 120.0.42.2
+      container_name: Routeur_entreprise_site_principal
+  
+  routeur-interco : 
+      build : image-routeur-interco
+      restart: always
+      privileged: true
+      command: tail -f /dev/null 
+      networks:
+        Reseau_Coeur:
+          ipv4_address: 120.0.40.2
+      container_name: Routeur_interco
 
 networks:
   particuliers:
-    driver: macvlan
+   
     ipam:
+      driver: default
       config:
         - subnet: "120.0.34.0/23"
+  
   reseau_Prive:
     
     ipam:
@@ -138,26 +139,37 @@ networks:
         - subnet: "192.168.1.0/24"
   
   Reseau_Coeur:
-    driver: macvlan
+    
     ipam:
+      driver: default
       config:
         - subnet: "120.0.40.0/27"
 
-  Reseau_Entreprise:
-    driver: macvlan
+  Reseau_acces_entreprises:
+    
     ipam:
+      driver: default
       config:
         - subnet: "120.0.32.0/24"
  
-  Reseau_Entreprise_DNS:
-    driver: macvlan
+  Reseau_DMZ:
+    
     ipam:
+      driver: default
       config:
         - subnet: "120.0.33.0/27"
   
    
-  Reseau_DMZ:
-    driver: macvlan
+  Reseau_services_FAI:
+    
     ipam:
+      driver: default
       config:
         - subnet: "120.0.38.0/27"
+
+  Reseau_service_administratif:
+    
+    ipam:
+      driver: default
+      config:
+        - subnet: "120.0.42.0/27"

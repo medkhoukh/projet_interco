@@ -15,6 +15,7 @@ pour lancer le script principal : ./start.sh
 
 pour tester le serveur dns : il faut changer le fichier resolv.conf , et mettre l'adresse du serveur dns que vous souhaitiez utiliser,
 par exemple " nameserver 120.0.33.21 " qui est le DNS de l'entreprise
+
 on peut tester le bon fonctionnement à l'aide de " curl http://EntrepriseReseau2025.com "
 
 si vous avez des problèmes, on peut en discuter sur messenger.

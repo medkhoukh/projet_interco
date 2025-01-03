@@ -8,10 +8,11 @@ lanccer docker sur votre machine
 -- et puis lancez la commande : docker-compose up -d  ( pour run le projet)
 
 
-ajoutez les permissions pour lancer les scripts: chmod +x script_route_default.sh //  chmod +x script_ospf.sh
+ajoutez les permissions pour lancer les scripts: chmod +x script_route_default.sh //  chmod +x script_ospf.sh ......... ( pour tout les scripts )
 
+pour lancer le script principal : ./start.sh
+pour tester le serveur dns : il faut changer le fichier resolv.conf , et mettre l'adresse du serveur dns que vous souhaitiez utiliser,
+par exemple " nameserver 120.0.33.21 " qui est le DNS de l'entreprise
+on peut tester le bon fonctionnement à l'aide de " curl http://EntrepriseReseau2025.com "
 
-pour activer le routage ospf sur les routeurs il faut executer le script_ospf.sh avec : ./script_ospf.sh ( ps : si ospf fonctionne déja correctement sur l'un des routeurs et que le script bloque, appuyez sur ctrl+c)
-
-
-pour activer les routes par defaut et start le dhcp sur la box il faut executer le script_route_default.sh 
+si vous avez des problèmes, on peut en discuter sur messenger.

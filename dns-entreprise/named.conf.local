@@ -1,0 +1,9 @@
+zone "EntrepriseReseau2025.com" {
+    type master;
+    file "/etc/bind/zones/forward.EntrepriseReseau2025.db";
+};
+
+zone "33.0.120.in-addr-arpa" {
+    type master;
+    file "/etc/bind/zones/reverse.EntrepriseReseau2025.db";
+};

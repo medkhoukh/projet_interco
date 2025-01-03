@@ -1,0 +1,9 @@
+zone "fournisseur2025.com" {
+    type master;
+    file "/etc/bind/zones/forward.fournisseur2025.db";
+};
+
+zone "38.0.120.in-addr-arpa" {
+    type master;
+    file "/etc/bind/zones/reverse.fournisseur2025.db";
+};

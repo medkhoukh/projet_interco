@@ -1,4 +1,0 @@
-zone "exemple.com" { #Ce fichier gère l'ensemble des clients
-    type master;
-    file "/etc/bind/db.exemple.com"; #lien vers le fichier de configuration du client exemple.com
-};

@@ -24,8 +24,9 @@ services:
     #ID admin: openvpn et le mdp: celui trouvé avant
     #Tester avec le mdp : projetinterco 
     #Ce mdp fonctionne si ma config est ok 
-    # IMPORTANT: Si on le mets dans le réseau DMZ, il ne fonctionne pas. Car le réseau DMZ est en macvlan et non en bridge. 
-
+    # IMPORTANT: Si on le mets dans le réseau DMZ, il ne fonctionne pas. Car le réseau DMZ est en macvlan et non en bridge.
+    # Si il n'y a pas le volume de créer : mkdir -p ~/openvpn/data
+  
     image: openvpn/openvpn-as
     container_name: openvpn-as 
     privileged : true

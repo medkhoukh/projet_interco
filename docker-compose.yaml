@@ -16,6 +16,35 @@ services:
     networks:
       Reseau_services_FAI:
         ipv4_address: 120.0.38.8
+
+  openvpn-as:
+    #Trouver le mdp de base : docker logs openvpn-as | grep 'Auto-generated pass'
+    #Access Server : https://localhost:943/admin
+    #Il faut d'abord vérifier que le serveur fonctionne bien avec la commande : docker logs -f openvpn-as
+    #ID admin: openvpn et le mdp: celui trouvé avant
+    #Tester avec le mdp : projetinterco 
+    #Ce mdp fonctionne si ma config est ok 
+    # IMPORTANT: Si on le mets dans le réseau DMZ, il ne fonctionne pas. Car le réseau DMZ est en macvlan et non en bridge. 
+
+    image: openvpn/openvpn-as
+    container_name: openvpn-as 
+    privileged : true
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - MKNOD
+    ports:
+      - 943:943
+      - 443:443
+      - 1194:1194/udp
+    #networks:
+      #Reseau_VPN:
+        #ipv4_address: 120.0.42.2
+    volumes:
+      - "./openvpn/data:/etc/openvpn"
+    restart: always
+  
   box:
     image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
     restart: always

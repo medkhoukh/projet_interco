@@ -1,22 +1,5 @@
 
 services:
-  
-  serveur-web-entreprise:
-    image: nginx
-    privileged: true
-    networks:
-      Reseau_DMZ:
-        ipv4_address: 120.0.33.22
-    container_name: serveur_web_entreprise
-
-  serveur-web:
-    image: nginx
-    privileged: true
-    container_name: serveur_web
-    networks:
-      Reseau_services_FAI:
-        ipv4_address: 120.0.38.8
-
   openvpn-as:
     #Trouver le mdp de base : docker logs openvpn-as | grep 'Auto-generated pass'
     #Access Server : https://localhost:943/admin
@@ -35,17 +18,29 @@ services:
     cap_add:
       - NET_ADMIN
       - MKNOD
-    ports:
-      - 943:943
-      - 443:443
-      - 1194:1194/udp
-    #networks:
-      #Reseau_VPN:
-        #ipv4_address: 120.0.42.2
+
+    networks:
+      Reseau_DMZ:
+        ipv4_address: 120.0.33.23
     volumes:
       - "./openvpn/data:/etc/openvpn"
     restart: always
-  
+
+  serveur-web-entreprise:
+    image: nginx
+    privileged: true
+    networks:
+      Reseau_DMZ:
+        ipv4_address: 120.0.33.22
+    container_name: serveur_web_entreprise
+
+  serveur-web:
+    image: nginx
+    privileged: true
+    container_name: serveur_web
+    networks:
+      Reseau_services_FAI:
+        ipv4_address: 120.0.38.8
   box:
     image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
     restart: always
@@ -108,14 +103,31 @@ services:
       container_name: serveur_dns_entreprise
 
   clientparticulier:
-      image: debian:latest
+      image: debian
       restart: always
       privileged: true
-      command: tail -f /dev/null 
+      command: tail -f /dev/null
+
+      stdin_open: 
+        true
       networks:
         reseau_Prive:
           ipv4_address: 192.168.1.3
       container_name: particulier
+  
+  clientparticulier2:
+      image: ubuntu:20.04
+      restart: always
+      privileged: true
+      command: tail -f /dev/null
+      environment:
+        DISPLAY: host.docker.internal:0.0
+      stdin_open: 
+        true
+      networks:
+        reseau_Prive:
+          ipv4_address: 192.168.1.4
+      container_name: particulier2
 
   routeur-acces-entreprises:
       build : image-routeur-acces-entreprises
@@ -139,7 +151,7 @@ services:
           ipv4_address: 120.0.32.3
         Reseau_DMZ:
           ipv4_address: 120.0.33.18
-        Reseau_service_administratif:
+        Reseau_entreprise_bureaux:
           ipv4_address: 120.0.42.2
       container_name: Routeur_entreprise_site_principal
   
@@ -152,6 +164,36 @@ services:
         Reseau_Coeur:
           ipv4_address: 120.0.40.2
       container_name: Routeur_interco
+  routeur_bureau_administratif:
+    image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
+    restart: always
+    privileged: true
+    command: tail -f /dev/null
+    networks:
+      Reseau_entreprise_bureaux:
+          ipv4_address: 120.0.42.3
+    volumes:
+     - ./dhcpd.conf:/etc/dhcp/dhcpd.conf   
+    tty: true   
+    stdin_open: true
+    container_name: routeur_bureau_administratif
+
+  serveurast:
+    build:
+      context: ./serveurast
+      dockerfile: dockerfile
+    container_name: serveurast
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - seccomp=unconfined
+    privileged: true
+
+    networks:
+        reseau_Prive:
+          ipv4_address: 192.168.1.10
+
+    
 
 networks:
   particuliers:
@@ -197,7 +239,7 @@ networks:
       config:
         - subnet: "120.0.38.0/27"
 
-  Reseau_service_administratif:
+  Reseau_entreprise_bureaux:
     
     ipam:
       driver: default

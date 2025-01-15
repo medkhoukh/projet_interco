@@ -101,7 +101,9 @@ services:
           ipv4_address: 120.0.33.21
       
       container_name: serveur_dns_entreprise
-
+  
+  
+  #particuliers FAI
   clientparticulier:
       image: debian
       restart: always
@@ -129,6 +131,10 @@ services:
           ipv4_address: 192.168.1.4
       container_name: particulier2
 
+
+
+
+
   routeur-acces-entreprises:
       build : image-routeur-acces-entreprises
       restart: always
@@ -141,6 +147,8 @@ services:
           ipv4_address: 120.0.32.4
       container_name: Routeur_acces_entreprises
 
+
+  #containers entreprise
   routeur-entreprise-site-principal:
       build : image-routeur-Entreprise-site-principal
       restart: always
@@ -155,6 +163,60 @@ services:
           ipv4_address: 120.0.42.2
       container_name: Routeur_entreprise_site_principal
   
+  routeur-entreprise-bureau-administratif:
+      image:  3x3cut0r/isc-dhcp-server:latest # image dhcp
+      restart: always
+      privileged: true
+      command: tail -f /dev/null 
+      networks:
+        Reseau_PriveAdministratif:
+          ipv4_address: 192.168.2.2
+        Reseau_entreprise_bureaux:
+          ipv4_address: 120.0.42.3
+      container_name: Routeur_bureau_administratif
+
+  routeur-entreprise-bureau-technique:
+      image :  3x3cut0r/isc-dhcp-server:latest # image dhcp
+      restart: always
+      privileged: true
+      command: tail -f /dev/null 
+      networks:
+        Reseau_PriveTechnique:
+          ipv4_address: 192.168.3.2
+        Reseau_entreprise_bureaux:
+          ipv4_address: 120.0.42.4
+      container_name: Routeur_bureau_technique
+  
+ 
+  
+  employe-administratif:
+      image: ubuntu:20.04
+      restart: always
+      privileged: true
+      command: tail -f /dev/null
+      environment:
+        DISPLAY: host.docker.internal:0.0
+      stdin_open: 
+        true
+      networks:
+        Reseau_PriveAdministratif:
+          ipv4_address: 192.168.2.3
+      container_name: employe_administartif
+  
+  employe-technique:
+      image: ubuntu:20.04
+      restart: always
+      privileged: true
+      command: tail -f /dev/null
+      environment:
+        DISPLAY: host.docker.internal:0.0
+      stdin_open: 
+        true
+      networks:
+        Reseau_PriveTechnique:
+          ipv4_address: 192.168.3.3
+      container_name: employe_technique
+
   routeur-interco : 
       build : image-routeur-interco
       restart: always
@@ -164,25 +226,10 @@ services:
         Reseau_Coeur:
           ipv4_address: 120.0.40.2
       container_name: Routeur_interco
-  routeur_bureau_administratif:
-    image: 3x3cut0r/isc-dhcp-server:latest # image dhcp
-    restart: always
-    privileged: true
-    command: tail -f /dev/null
-    networks:
-      Reseau_entreprise_bureaux:
-          ipv4_address: 120.0.42.3
-    volumes:
-     - ./dhcpd.conf:/etc/dhcp/dhcpd.conf   
-    tty: true   
-    stdin_open: true
-    container_name: routeur_bureau_administratif
-
-  serveurast:
-    build:
-      context: ./serveurast
-      dockerfile: dockerfile
-    container_name: serveurast
+  
+  serveu-voip:
+    build: mumble-docker-master
+    container_name: serveur-voip
     cap_add:
       - NET_ADMIN
     security_opt:
@@ -190,11 +237,11 @@ services:
     privileged: true
 
     networks:
-        reseau_Prive:
-          ipv4_address: 192.168.1.10
+      Reseau_DMZ:
+        ipv4_address: 120.0.33.20
 
     
-
+#reseaux
 networks:
   particuliers:
    
@@ -245,3 +292,16 @@ networks:
       driver: default
       config:
         - subnet: "120.0.42.0/27"
+
+  Reseau_PriveAdministratif:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.2.0/24"
+
+  Reseau_PriveTechnique:
+
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.3.0/24"

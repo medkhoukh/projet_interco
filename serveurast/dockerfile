@@ -1,0 +1,2 @@
+FROM phlak/mumble
+COPY config.ini /etc/mumble/config.ini

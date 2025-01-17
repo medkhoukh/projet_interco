@@ -2,7 +2,7 @@
 services:
   openvpn-as:
     #Trouver le mdp de base : docker logs openvpn-as | grep 'Auto-generated pass'
-    #Access Server : https://localhost:943/admin
+    #Access Server : https://120.0.33.23:943/admin
     #Il faut d'abord vérifier que le serveur fonctionne bien avec la commande : docker logs -f openvpn-as
     #ID admin: openvpn et le mdp: celui trouvé avant
     #Tester avec le mdp : projetinterco 
@@ -25,6 +25,21 @@ services:
     volumes:
       - "./openvpn/data:/etc/openvpn"
     restart: always
+
+  database:
+    image: mysql:latest
+    container_name: database
+    environment:
+        MYSQL_ROOT_PASSWORD: admin
+        MYSQL_DATABASE: Coordonnees
+    networks:
+        reseau_Prive:
+          ipv4_address: 192.168.1.12
+    ports: 
+        - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql       
+      - ./initdb:/docker-entrypoint-initdb.d 
 
   serveur-web-entreprise:
     image: nginx
@@ -200,7 +215,7 @@ services:
         true
       networks:
         Reseau_PriveAdministratif:
-          ipv4_address: 192.168.2.3
+          ipv4_address: 192.168.2.5
       container_name: employe_administartif
   
   employe-technique:
@@ -223,10 +238,42 @@ services:
       privileged: true
       command: tail -f /dev/null 
       networks:
+        Reseau_acces_entreprises_2:
+          ipv4_address: 120.0.44.2
         Reseau_Coeur:
           ipv4_address: 120.0.40.2
+        
       container_name: Routeur_interco
   
+  #deuxieme site
+  routeur-entreprise-site-2 : 
+      image :  3x3cut0r/isc-dhcp-server:latest # image dhcp
+      restart: always
+      privileged: true
+      command: tail -f /dev/null 
+      networks:
+        Reseau_acces_entreprises_2:
+          ipv4_address: 120.0.44.3
+        Reseau_prive_entreprise_2:
+          ipv4_address: 192.168.10.2
+      container_name: Routeur_entreprise_site_2
+  
+  
+  employe-site-2:
+      image: ubuntu:20.04
+      restart: always
+      privileged: true
+      command: tail -f /dev/null
+      environment:
+        DISPLAY: host.docker.internal:0.0
+      stdin_open: 
+        true
+      networks:
+        Reseau_prive_entreprise_2:
+          ipv4_address: 192.168.10.3
+      container_name: employe_site_2
+
+
   serveu-voip:
     build: mumble-docker-master
     container_name: serveur-voip
@@ -305,3 +352,17 @@ networks:
       driver: default
       config:
         - subnet: "192.168.3.0/24"
+
+
+  Reseau_acces_entreprises_2:
+    
+    ipam:
+      driver: default
+      config:
+        - subnet: "120.0.44.0/27"
+
+  Reseau_prive_entreprise_2:
+     ipam:
+      driver: default
+      config:
+        - subnet: "192.168.10.0/24"

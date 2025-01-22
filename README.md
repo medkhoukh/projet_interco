@@ -8,10 +8,11 @@ lanccer docker sur votre machine
 -- et puis lancez la commande : docker-compose up -d  ( pour run le projet)
 
 
-ajoutez les permissions pour lancer les scripts: chmod +x script_route_default.sh //  chmod +x script_ospf.sh ......... ( pour tout les scripts : chmod x+ script*.sh )
+ajoutez les permissions pour lancer les scripts: chmod +x script_route_default.sh //  chmod +x script_ospf.sh ......... ( pour tout les scripts : chmod +x script*.sh )
 
 pour lancer le script principal : ./start.sh
 
+(pour que le script .start ne prenne pas trop de temps, on a decider d'installer les services un à un lors de l'ouverture des containers : firefox, mumble et wireshark)
 
 pour tester le serveur dns : il faut changer le fichier resolv.conf , et mettre l'adresse du serveur dns que vous souhaitiez utiliser,
 par exemple " nameserver 120.0.33.21 " qui est le DNS de l'entreprise
